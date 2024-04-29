@@ -36,10 +36,10 @@ services:
     ports:
       - "5432:5432"
 
-    redis:
-      image: redis:alpine
-      restart: always
-      volumes:
-        - ./tmp/db/redis:/data
-      ports:
-        - "6380:6380"
+  redis:
+    image: redis:alpine
+    restart: always
+    volumes:
+      - ./tmp/db/redis:/data
+    ports:
+      - "6380:6380"

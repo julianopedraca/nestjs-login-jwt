@@ -7,9 +7,18 @@ import { UsersModule } from './users/users.module';
 import { AppConfig, DatabaseConfig } from './config';
 import { MoviesModule } from './movies/movies.module';
 import { AuthModule } from './auth/auth.modules';
+import { CacheModule } from '@nestjs/cache-manager';
+import type { RedisClientOptions } from 'redis';
 
 @Module({
   imports: [
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        ...configService.get('redis')
+      }),
+      inject: [ConfigService],    
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
