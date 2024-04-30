@@ -9,14 +9,19 @@ import { SignInDto } from './dto/sign-in.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService){}
 
-  @Post('sing-up')
-  public async singUp(@Body() signUpDto: SignUpDto){
+  @Post('sign-up')
+  public async signUp(@Body() signUpDto: SignUpDto){
       return this.authService.signUp(signUpDto);
   }
 
-  // @Post('sing-in')
-  // public async signIn(@Body() signInDto: SignInDto){
-  //     return this.authService.signIn(signInDto);
+  @Post('sign-in')
+  public async signIn(@Body() signInDto: SignInDto){
+      return this.authService.signIn(signInDto);
+  }
+
+  // signOut(@ActiveUser('id') userId: string): Promise<void> {
+  //   return this.authService.signOut(userId);
   // }
+
 
 }

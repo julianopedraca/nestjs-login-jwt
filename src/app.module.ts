@@ -4,21 +4,15 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
-import { AppConfig, DatabaseConfig } from './config';
+import { AppConfig, DatabaseConfig } from './_config';
 import { MoviesModule } from './movies/movies.module';
 import { AuthModule } from './auth/auth.modules';
 import { CacheModule } from '@nestjs/cache-manager';
-import type { RedisClientOptions } from 'redis';
+import { RedisOptions } from './redis/redis.options';
+
 
 @Module({
   imports: [
-    CacheModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        ...configService.get('redis')
-      }),
-      inject: [ConfigService],    
-    }),
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
@@ -31,9 +25,10 @@ import type { RedisClientOptions } from 'redis';
       }),
       inject: [ConfigService]
     }),
+    CacheModule.registerAsync(RedisOptions),
     UsersModule,
     MoviesModule,
-    AuthModule
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

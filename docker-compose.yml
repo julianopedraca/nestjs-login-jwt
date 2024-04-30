@@ -42,4 +42,4 @@ services:
     volumes:
       - ./tmp/db/redis:/data
     ports:
-      - "6380:6380"
+      - "6379:6379"

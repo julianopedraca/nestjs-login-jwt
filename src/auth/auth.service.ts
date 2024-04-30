@@ -1,17 +1,20 @@
-import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { SignUpDto } from './dto/sign-up.dto';
 import * as bcrypt from 'bcryptjs';
 import { SignInDto } from './dto/sign-in.dto';
-import { randomUUID } from 'crypto';
+import { JwtService } from '@nestjs/jwt';
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(Users)
-    private userRepository: Repository<Users>
+    private userRepository: Repository<Users>,
+    private jwtService: JwtService,
+    private redisService: RedisService,
   ) { }
 
   async signUp(signUpDto: SignUpDto): Promise<Users> {
@@ -27,48 +30,43 @@ export class AuthService {
     }
   }
 
-  // async signIn(signInDto: SignInDto): Promise<{ accessToken: string }> {
-  //   const user = (await this.userRepository.findBy({
-  //     username: signInDto.username,
-  //   }))[0]
+  async signIn(signInDto: SignInDto): Promise<{ access_token: string }> {
+    const user = (await this.userRepository.findBy({
+      username: signInDto.username,
+    }))[0]
 
 
-  //   if (!user) {
-  //     throw new BadRequestException('User not found');
-  //   }
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
 
-  //   console.log("O timpo é:",typeof(signInDto.password));
-    
-  //   const isPasswordMatch = await bcrypt.compare(
-  //     signInDto.password,
-  //     user.password,
-  //   );
+    const isPasswordMatch = await bcrypt.compare(
+      signInDto.password,
+      user.password,
+    );
    
-  //   if (!isPasswordMatch) {
-  //     throw new BadRequestException('Invalid password');
-  //   }
+    if (!isPasswordMatch) {
+      throw new UnauthorizedException ('Invalid password');
+    }
 
-  //   return await this.generateAccessToken(user);
-  // }
+    return await this.generateAccessToken(user);
+  }
 
-  // async generateAccessToken(user: Partial<SignInDto>,): Promise<{ accessToken: string }> {
-  //   const tokenId = randomUUID();
+  async signOut(userId: string): Promise<void> {
+    // this.redisService.delete(`user-${userId}`);
+  }
 
-  //   await this.redisService.insert(`user-${user.id}`, tokenId);
+  async generateAccessToken(user: Partial<SignInDto>,): Promise<{ access_token: string }> {
+    
+    const payload = { id: user.id, username: user.username };
 
-  //   const accessToken = await this.jwtService.signAsync(
-  //     {
-  //       id: user.id,
-  //       email: user.email,
-  //       tokenId,
-  //     } as ActiveUserData,
-  //     {
-  //       secret: this.jwtConfiguration.secret,
-  //       expiresIn: this.jwtConfiguration.accessTokenTtl,
-  //     },
-  //   );
+    const token = await this.jwtService.signAsync(payload);
+    
+    const stringId = user.id.toString()
+    
+    await this.redisService.insert(stringId, token);
 
-  //   return { accessToken };
-  // }
+    return {  access_token: token  };
+  }
 
 }
