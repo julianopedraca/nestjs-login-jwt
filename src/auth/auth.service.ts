@@ -8,6 +8,7 @@ import * as bcrypt from 'bcryptjs';
 import { SignInDto } from './dto/sign-in.dto';
 import { JwtService } from '@nestjs/jwt';
 import { RedisService } from 'src/redis/redis.service';
+import { SignOutDto } from './dto/sign-out.dto';
 
 @Injectable()
 export class AuthService {
@@ -53,8 +54,8 @@ export class AuthService {
     return await this.generateAccessToken(user);
   }
 
-  async signOut(userId: string): Promise<void> {
-    // this.redisService.delete(`user-${userId}`);
+  async signOut(uuid: SignOutDto): Promise<number> {
+    return await this.redisService.delete(uuid.uuid);
   }
 
   async generateAccessToken(user: Partial<SignInDto>,): Promise<{  uuid_token: string }> {

@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { ApiTags } from '@nestjs/swagger';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
+import { SignOutDto } from './dto/sign-out.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -19,9 +20,10 @@ export class AuthController {
       return this.authService.signIn(signInDto);
   }
 
-  // signOut(@ActiveUser('id') userId: string): Promise<void> {
-  //   return this.authService.signOut(userId);
-  // }
+  @Post('sign-out')
+  public async signOut(@Body() uuid: SignOutDto): Promise<number> {
+    return this.authService.signOut(uuid);
+  }
 
 
 }

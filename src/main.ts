@@ -12,7 +12,7 @@ async function bootstrap() {
     .setTitle('Login Jwt')
     .setDescription('api login jwt')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addBearerAuth({ type: 'http', scheme: 'bearer'}, 'uuid-token')
     .build();
   
     const document = SwaggerModule.createDocument(app, config);
