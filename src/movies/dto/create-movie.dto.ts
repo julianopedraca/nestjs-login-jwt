@@ -1,1 +1,8 @@
-export class CreateMovieDto {}
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString } from 'class-validator';
+
+export class CreateMovieDto {
+    @IsString()
+    @ApiProperty()
+    name: string;
+}

@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from 'src/users/entities/user.entity';
+import { randomUUID } from 'crypto';
 import { Repository } from 'typeorm';
 import { SignUpDto } from './dto/sign-up.dto';
 import * as bcrypt from 'bcryptjs';
@@ -30,7 +31,7 @@ export class AuthService {
     }
   }
 
-  async signIn(signInDto: SignInDto): Promise<{ access_token: string }> {
+  async signIn(signInDto: SignInDto): Promise<{ uuid_token: string }> {
     const user = (await this.userRepository.findBy({
       username: signInDto.username,
     }))[0]
@@ -56,17 +57,17 @@ export class AuthService {
     // this.redisService.delete(`user-${userId}`);
   }
 
-  async generateAccessToken(user: Partial<SignInDto>,): Promise<{ access_token: string }> {
+  async generateAccessToken(user: Partial<SignInDto>,): Promise<{  uuid_token: string }> {
+
+    const uuidToken = randomUUID();
     
     const payload = { id: user.id, username: user.username };
 
     const token = await this.jwtService.signAsync(payload);
-    
-    const stringId = user.id.toString()
-    
-    await this.redisService.insert(stringId, token);
+        
+    await this.redisService.insert(uuidToken, token);
 
-    return {  access_token: token  };
+    return { uuid_token: uuidToken };
   }
 
 }

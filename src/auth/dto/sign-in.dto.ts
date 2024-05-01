@@ -5,7 +5,6 @@ import { IsNumber, IsString } from 'class-validator';
 export class SignInDto {
     
     @IsNumber()
-    @ApiProperty()
     id: number;
 
     @IsString()

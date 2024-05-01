@@ -6,6 +6,7 @@ import { Users } from 'src/users/entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './auth.constants';
 import { RedisService } from 'src/redis/redis.service';
+import { AuthGuard } from './guards/auth.guard';
 
 @Module({
   imports: [
@@ -17,6 +18,6 @@ import { RedisService } from 'src/redis/redis.service';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, RedisService],
+  providers: [AuthService, AuthGuard, RedisService],
 })
 export class AuthModule {}
