@@ -4,6 +4,6 @@ WORKDIR /usr/src/app
 
 COPY . .
 
-RUN npm install && npm run build && npm run migration:run
+RUN npm install && npm run build
 
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "run", "migration:run","&&","npm", "run", "start:prod"]
