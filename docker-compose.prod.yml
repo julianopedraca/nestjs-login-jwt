@@ -7,8 +7,7 @@ services:
       context: .
       dockerfile: ./Dockerfile.prod
     env_file:
-      - .env
-    command: ["npm", "run", "migration:run"]
+      - .env.prod
     ports:
       - 3000:3000
     volumes:
