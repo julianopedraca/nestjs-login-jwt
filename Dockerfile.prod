@@ -6,4 +6,4 @@ COPY . .
 
 RUN npm install && npm run build
 
-CMD ["npm", "run", "migration:run","&&","npm", "run", "start:prod"]
+CMD sh -c 'npm run migration:run && npm run start:prod'
