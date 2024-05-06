@@ -4,11 +4,6 @@ import { config } from "dotenv";
 
 config();
 
-console.log('---------------ENV MIGRATION-----------------');
-console.log(process.env.NODE_ENV);
-
-console.log('---------------END MIGRATION-----------------');
-
 const configService = new ConfigService();
 //used during migration
 export default new DataSource({

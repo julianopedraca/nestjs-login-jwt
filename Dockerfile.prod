@@ -1,9 +1,0 @@
-FROM node:lts-alpine
-
-WORKDIR /usr/src/app
-
-COPY . .
-
-RUN npm install && npm run build
-
-CMD sh -c 'npm run migration:run && npm run start:prod'
